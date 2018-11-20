@@ -24,9 +24,9 @@ This sketch demonstates how battery consumption can be reduced to 10ma during sl
 | 4a2d   | Voltage regulator  | <https://www.st.com/resource/en/datasheet/ld3985.pdf> | TODO/not possible |
 
 
-## Dependecies
+## Dependencies
 * esp32 Arduino core: <https://github.com/espressif/arduino-esp32>
 * Arduino LoRa: <https://github.com/sandeepmistry/arduino-LoRa>
-## Usefull links
+## Useful links
 * Official Github: <http://github.com/LilyGO/TTGO-T-Beam>
 * TTGO T-beam wiki: <http://ttgobbs.com>
