@@ -4,7 +4,10 @@ The TTGO T-beam is a microcontrollers with a ESP32, WiFi, Bluetooth, GPS, LORA a
 
 This sketch demonstates how battery consumption can be reduced to 10ma during sleep, see image below. Please feel free to add more power reduction methods.
 
-![alt text][power_consumption]
+<table class="image">
+<caption align="bottom">TTGO T-Beam 10ma power comsumption</caption>
+<tr><td><img src="https://joep.space/img/ttgo_t-beam_power-consumption_2.jpg" width="250" alt="TTGO T-Beam 10ma power comsumption"/></td></tr>
+</table>
 
 ## Components
 | Chip        | Application   | Documentation                                                            | Power reduction methods  |
@@ -20,9 +23,6 @@ This sketch demonstates how battery consumption can be reduced to 10ma during sl
 | tp5400 | Battery management | <http://www.tpwic.com/index.php?m=content&c=index&a=show&catid=172&id=71> | TODO/not possible |
 | 4a2d   | Voltage regulator  | <https://www.st.com/resource/en/datasheet/ld3985.pdf> | TODO/not possible |
 
-
-
-[power_consumption]: https://joep.space/img/ttgo_t-beam_power-consumption_2.jpg "TTGO T-beam 10ma sleep current"
 
 ## Dependecies
 * esp32 Arduino core: <https://github.com/espressif/arduino-esp32>
