@@ -22,7 +22,7 @@ This sketch demonstates how battery consumption can be reduced to 10ma during sl
 
 
 
-[power_consumption]: https://joep.space/img/ttgo_t-beam_power-consumption.jpg "TTGO T-beam 10ma sleep current"
+[power_consumption]: https://joep.space/img/ttgo_t-beam_power-consumption_2.jpg "TTGO T-beam 10ma sleep current"
 
 ## Dependecies
 * esp32 Arduino core: <https://github.com/espressif/arduino-esp32>
