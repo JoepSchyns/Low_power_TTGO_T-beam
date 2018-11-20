@@ -2,7 +2,7 @@
 
 The TTGO T-beam is a microcontrollers with a ESP32, WiFi, Bluetooth, GPS, LORA and Battery handling. Therefore it is especially suitable for off grid applications. However, little documentation can be found on reducting battery consumption.
 
-This sketch demonstates how battery consumption can be reduced to 10ma during sleep, see image below. Please feel free to push more power reduction methods.
+This sketch demonstrates how battery consumption can be reduced to 10ma during sleep, see image below. Please feel free to push more power reduction methods.
 
 <table class="image">
 <caption align="bottom">TTGO T-Beam 10ma power comsumption</caption>
