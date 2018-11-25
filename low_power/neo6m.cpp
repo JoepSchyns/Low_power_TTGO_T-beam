@@ -9,7 +9,7 @@ Neo6m::Neo6m() {
 
 void Neo6m::enable_sleep() { //TODO implement  UBX-ACK
   Neo6m::softwareReset(); //sleep_mode can only be activated at start up?
-  delay(300); //give some time to restart //TODO wait for ack
+  delay(600); //give some time to restart //TODO wait for ack
   neoSerial.write(RXM_PMREQ, sizeof(RXM_PMREQ));
   getUBX_ACK(CFG_RST);
 }
@@ -63,7 +63,7 @@ bool Neo6m::getUBX_ACK(const uint8_t *MSG) {
     // Make sure data is available to read
     if (neoSerial.available()) {
       b = neoSerial.read();
- 
+      Serial.print(b, HEX);
       // Check that bytes arrive in sequence as per expected ACK packet
       if (b == ackPacket[ackByteID]) { 
         ackByteID++;
