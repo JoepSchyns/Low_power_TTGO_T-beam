@@ -11,7 +11,7 @@ class Neo6m
 {
   public:
     Neo6m();
-    size_t turnOff();
+    size_t sleep();
     size_t softwareReset();
   private:
   //u-blox 6 Receiver Description 9.5 Power On/Off command and 36.3 RXM-PMREQ

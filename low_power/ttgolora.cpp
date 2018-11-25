@@ -7,7 +7,7 @@ TTGOLoRa::TTGOLoRa() {
 
 }
 
-void TTGOLoRa::turnOff(){
+void TTGOLoRa::sleep(){
   LoRa.sleep();
 }
 
