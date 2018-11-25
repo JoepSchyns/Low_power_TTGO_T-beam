@@ -17,7 +17,7 @@ class TTGOLoRa
   public:
     TTGOLoRa();
     bool start();
-    void sleep();
+    void enable_sleep();
   private:
 };
 

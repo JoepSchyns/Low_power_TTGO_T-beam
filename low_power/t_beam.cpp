@@ -13,8 +13,8 @@ T_beam::T_beam(){
 
 //put the t-beam sleep with the least amount off power consumption as possible
 void T_beam::low_power_deep_sleep_timer(uint64_t time_in_us){
-  gps->sleep();
-  lora->sleep();
+  gps->enable_sleep();
+  lora->enable_sleep();
   isolateGPIO();
   turnOffWifi();
   turnOffBluetooth();
