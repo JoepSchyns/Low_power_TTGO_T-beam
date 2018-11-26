@@ -5,8 +5,8 @@ The TTGO T-beam is a microcontrollers with a ESP32, WiFi, Bluetooth, GPS, LORA a
 This sketch demonstrates how battery consumption can be reduced to 10ma during sleep, see image below. Please feel free to push more power reduction methods.
 
 <table class="image">
-<caption align="bottom">TTGO T-Beam 10ma power comsumption</caption>
-<tr><td><img src="https://joep.space/img/ttgo_t-beam_power-consumption_2.jpg" width="250" alt="TTGO T-Beam 10ma power comsumption"/></td></tr>
+  <tr><td><img src="https://joep.space/img/ttgo_t-beam_power-consumption_2.jpg" width="250" alt="TTGO T-Beam 10ma power comsumption"/></td></tr>
+  <figcaption align="bottom"><sub><sup>TTGO T-Beam 10ma power comsumption</sup></sub></figcaption>
 </table>
 
 ## Components
@@ -23,10 +23,16 @@ This sketch demonstrates how battery consumption can be reduced to 10ma during s
 | tp5400 | Battery management | <http://www.tpwic.com/index.php?m=content&c=index&a=show&catid=172&id=71> | TODO/not possible |
 | 4a2d   | Voltage regulator  | <https://www.st.com/resource/en/datasheet/ld3985.pdf> | TODO/not possible |
 
+## Neo-6m UBX communication
+The t-beam gps chip (Neo-6m) can be put into sleep by commisioning a power save command using proprietary UBX protocol over Neo's RX TX pins. In normal mode of operation the chip sends out location using NMEA protocol. Switching between these protocols can be done via pin 14 and 15 (see Data Sheet 1.15). However, as can be seen in the image below, these pins are not connected on the T-beam. During testing is established that  the Neo-6m does execute UBX commands in NMEA mode, but does not send back an acknowledgement. Therefore ubox commands cannot be verified. Nonetheless pins 14 and 15 are exposed on the t-beam, thus they could be soldered by hand to two GPIO pins thereby enabling switching of protocols.
+<table class="image">
+  <tr><td><img src="https://joep.space/img/t-beam_neo.jpg" width="150" alt="TTGO T-Beam Neo-6m hardware configuration"/></td></tr>
+  <figcaption align="bottom"><sub><sup>TTGO T-Beam Neo-6m hardware configuration</sup></sub></figcaption>
+</table>
 
 ## Dependencies
 * esp32 Arduino core: <https://github.com/espressif/arduino-esp32>
 * Arduino LoRa: <https://github.com/sandeepmistry/arduino-LoRa>
 ## Useful links
 * Official Github: <http://github.com/LilyGO/TTGO-T-Beam>
-* TTGO T-beam wiki: <http://ttgobbs.com>
+* TTGO T-beam wiki: <http://tinymicros.com/wiki/TTGO_T-Beam>
