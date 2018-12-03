@@ -24,6 +24,7 @@ class T_beam
   public:
     T_beam();
     void low_power_deep_sleep_timer(uint64_t time_in_us);
+    TinyGPSLocation getLocation();
   private:
     Neo6m *gps;
     TTGOLoRa *lora;

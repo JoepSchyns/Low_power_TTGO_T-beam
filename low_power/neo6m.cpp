@@ -5,74 +5,113 @@ HardwareSerial neoSerial(1);
 
 Neo6m::Neo6m() {
   neoSerial.begin(9600, SERIAL_8N1, GPS_TX, GPS_RX);
+  neoSerial.setTimeout(2);
+
+  tGps = new TinyGPSPlus();
 }
 
+TinyGPSLocation Neo6m::getLocation(){
+  receiveData();
+  return tGps->location;
+}
+TinyGPSLocation Neo6m::waitForLocation(){
+  wakeup();
+  Serial.print("get location");
+  TinyGPSLocation result;
+  do{
+    Serial.print("read location");
+    result = getLocation();
+    Serial.print(F("INVALID"));
+    Serial.print(result.lat(), 6);
+    Serial.print(F(","));
+    Serial.print(result.lng(), 6);
+    Serial.println();
+  }while(!hasFix()); 
+  return result;
+}
+bool Neo6m::hasFix(){
+  if (tGps->location.isValid() && 
+      tGps->location.age() < 2000 &&
+      tGps->hdop.isValid() &&
+      tGps->hdop.value() <= 300 &&
+      tGps->hdop.age() < 2000 &&
+      tGps->altitude.isValid() && 
+      tGps->altitude.age() < 2000 ){
+    return true;
+  }
+  return false;
+}
+void Neo6m::receiveData() {
+  int data;
+  int previousMillis = millis();
+  while ((previousMillis + 1000) > millis())
+  {
+    while (neoSerial.available() )
+    {
+      char data = neoSerial.read();
+      tGps->encode(data);
+      Serial.print(data);
+    }
+  }
+  //Serial.println("");
+}
+
+//Protocol Specification V14 11.2.3.2 Wake-up
+bool Neo6m::isSleeping(){
+  for(int i = 0; i < 20; i++){ //send random to trigger respose
+      neoSerial.write(0xFF);
+    }
+  int previousMillis = millis();
+  while ((previousMillis + 1000) > millis()){
+    int datar = neoSerial.read();
+    Serial.print("sleep char?: ");
+    Serial.println(datar);
+    if(datar != -1){ //channel is not empty
+      return false;
+    }
+  }
+  return true;
+}
+void Neo6m::wakeup(){
+  Serial.println("Wake"); //Why does the gps chip activate after sleep?
+  while(isSleeping()){
+    //test 1 waking up
+    for(int i = 0; i < 20; i++){
+      Serial.println("high -> low");
+      digitalWrite(GPS_TX,HIGH);
+      delay(10);
+      digitalWrite(GPS_TX,LOW);
+    }
+  }
+    Serial.println("not sleeping");
+  
+  Serial.println("end Wake"); //Why does the gps chip activate after sleep?
+}
 void Neo6m::enable_sleep() { //TODO implement  UBX-ACK
-  Neo6m::softwareReset(); //sleep_mode can only be activated at start up?
-  delay(600); //give some time to restart //TODO wait for ack
-  neoSerial.write(RXM_PMREQ, sizeof(RXM_PMREQ));
-  getUBX_ACK(CFG_RST);
+  do{ //We cannot read UBX ack therefore try to sleep gps until it does not send data anymore
+    Serial.println("try to sleep gps!");
+    Neo6m::softwareReset(); //sleep_mode can only be activated at start up
+    delay(600); //give some time to restart //TODO wait for ack
+    neoSerial.write(RXM_PMREQ, sizeof(RXM_PMREQ));
+    unsigned long startTime = millis();
+    unsigned long offTime = 1;
+    Serial.println(offTime);
+    
+    while(millis() - startTime < 1000){ //wait for the last command to finish
+      int c = neoSerial.read();
+      if(offTime == 1 && c == -1){ //check  if empty
+        offTime = millis();
+      }else if(c != -1){
+        offTime = 1;
+      }
+      if(offTime != 1 && millis() - offTime > 100){ //if gps chip does not send any commands for .. seconds it is sleeping
+        Serial.println("sleeping gps!");
+        return;
+      }
+    }
+  }while(1);
 }
 
 void Neo6m::softwareReset() {
   neoSerial.write(CFG_RST, sizeof(CFG_RST));
-  getUBX_ACK(CFG_RST);
-}
-
-//read ack based on https://ukhas.org.uk/guides:ublox6
-bool Neo6m::getUBX_ACK(const uint8_t *MSG) {
-  uint8_t b;
-  uint8_t ackByteID = 0;
-  uint8_t ackPacket[10];
-  unsigned long startTime = millis();
-  Serial.print(" * Reading ACK response: ");
- 
-  // Construct the expected ACK packet    
-  ackPacket[0] = 0xB5;  // header
-  ackPacket[1] = 0x62;  // header
-  ackPacket[2] = 0x05;  // class
-  ackPacket[3] = 0x01;  // id
-  ackPacket[4] = 0x02;  // length
-  ackPacket[5] = 0x00;
-  ackPacket[6] = MSG[2];  // ACK class
-  ackPacket[7] = MSG[3];  // ACK id
-  ackPacket[8] = 0;   // CK_A
-  ackPacket[9] = 0;   // CK_B
- 
-  // Calculate the checksums
-  for (uint8_t i=2; i<8; i++) {
-    ackPacket[8] = ackPacket[8] + ackPacket[i];
-    ackPacket[9] = ackPacket[9] + ackPacket[8];
-  }
- 
-  while (1) {
- 
-    // Test for success
-    if (ackByteID > 9) {
-      // All packets in order!
-      Serial.println(" (SUCCESS!)");
-      return true;
-    }
- 
-    // Timeout if no valid response in 3 seconds
-    if (millis() - startTime > 3000) { 
-      Serial.println(" (FAILED!)");
-      return false;
-    }
- 
-    // Make sure data is available to read
-    if (neoSerial.available()) {
-      b = neoSerial.read();
-      Serial.print(b, HEX);
-      // Check that bytes arrive in sequence as per expected ACK packet
-      if (b == ackPacket[ackByteID]) { 
-        ackByteID++;
-        Serial.print(b, HEX);
-      } 
-      else {
-        ackByteID = 0;  // Reset and look again, invalid order
-      }
- 
-    }
-  }
 }

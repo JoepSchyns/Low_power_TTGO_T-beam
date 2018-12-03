@@ -3,12 +3,15 @@
 T_beam::T_beam(){
   gps = new Neo6m();
   lora = new TTGOLoRa();
-
-  //turn off blue LED
+  
+    //turn off blue LED
   pinMode(LED_PIN, OUTPUT); 
   digitalWrite(LED_PIN, LOW);
-}
 
+}
+TinyGPSLocation T_beam::getLocation(){
+  return gps->waitForLocation();
+}
 
 
 //put the t-beam sleep with the least amount off power consumption as possible
