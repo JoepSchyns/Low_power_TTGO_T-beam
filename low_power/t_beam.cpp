@@ -18,7 +18,7 @@ TinyGPSLocation T_beam::getLocation(){
 void T_beam::low_power_deep_sleep_timer(uint64_t time_in_us){
   gps->enable_sleep();
   lora->enable_sleep();
-  isolateGPIO();
+  //isolateGPIO();
   turnOffWifi();
   turnOffBluetooth();
 

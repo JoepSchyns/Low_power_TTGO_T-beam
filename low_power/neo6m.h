@@ -17,7 +17,6 @@ class Neo6m
     TinyGPSLocation getLocation();
     TinyGPSLocation waitForLocation();
   private:
-    bool isSleeping(); 
     void receiveData();
     TinyGPSPlus* tGps;
     bool hasFix();

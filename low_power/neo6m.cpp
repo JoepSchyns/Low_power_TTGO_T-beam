@@ -57,35 +57,17 @@ void Neo6m::receiveData() {
 }
 
 //Protocol Specification V14 11.2.3.2 Wake-up
-bool Neo6m::isSleeping(){
-  for(int i = 0; i < 20; i++){ //send random to trigger respose
-      neoSerial.write(0xFF);
-    }
-  int previousMillis = millis();
-  while ((previousMillis + 1000) > millis()){
-    int datar = neoSerial.read();
-    Serial.print("sleep char?: ");
-    Serial.println(datar);
-    if(datar != -1){ //channel is not empty
-      return false;
-    }
-  }
-  return true;
-}
 void Neo6m::wakeup(){
-  Serial.println("Wake"); //Why does the gps chip activate after sleep?
-  while(isSleeping()){
-    //test 1 waking up
-    for(int i = 0; i < 20; i++){
-      Serial.println("high -> low");
-      digitalWrite(GPS_TX,HIGH);
-      delay(10);
-      digitalWrite(GPS_TX,LOW);
-    }
-  }
-    Serial.println("not sleeping");
-  
-  Serial.println("end Wake"); //Why does the gps chip activate after sleep?
+  Serial.println("Wake");
+  int data = -1;
+  do{
+    for(int i = 0; i < 20; i++){ //send random to trigger respose
+        neoSerial.write(0xFF);
+      }
+    data = neoSerial.read();
+  }while(data == -1);
+  Serial.println("not sleeping");
+
 }
 void Neo6m::enable_sleep() { //TODO implement  UBX-ACK
   do{ //We cannot read UBX ack therefore try to sleep gps until it does not send data anymore
